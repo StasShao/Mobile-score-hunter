@@ -14,3 +14,19 @@ public interface IAIControllable
     void SetEnemyDetected(bool isDetected);
     void SetEnemy(Transform enemy);
 }
+public interface IHealth
+{
+    int Health { get; }
+    void SetHealth(int health);
+   
+}
+public interface IDamage:IHealth
+{
+    void Damage(int damage);
+}
+public interface IPoints
+{ 
+    int PointsCount { get; }
+    void SetPoints(int point);
+
+}

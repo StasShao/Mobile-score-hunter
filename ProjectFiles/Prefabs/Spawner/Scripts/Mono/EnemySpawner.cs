@@ -19,7 +19,7 @@ public class EnemySpawner : MonoBehaviour
         {
             SpawnpositionList[i].parent = null;
             SpawnContainer.position = SpawnpositionList[i].position;
-            pool.GetFreeElement().transform.parent = null;
+            pool.GetFreeElement(SpawnContainer).transform.parent = null;
         }
     }
 }

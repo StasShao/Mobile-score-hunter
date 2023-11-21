@@ -14,6 +14,8 @@ public class EnemyCharacter : Character,IAIControllable
     [SerializeField] protected NavMeshAgent Agent;
     [SerializeField] protected float WayPointMinDistance;
     [SerializeField] protected LayerMask GroundLayer;
+    [SerializeField] protected string ContactDamageColliderTag;
+    [SerializeField] protected int DamageValue;
 
     #region IAIControllable
     public Transform EnemyTransform { get; private set; }
@@ -89,5 +91,6 @@ public class EnemyCharacter : Character,IAIControllable
     {
         Tick();
     }
+   
 }
 

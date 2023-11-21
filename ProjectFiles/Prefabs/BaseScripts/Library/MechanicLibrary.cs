@@ -165,6 +165,84 @@ namespace ActionSystems
                 methodInfo.Invoke(invokedClass, parameters);
             }
         }
+        public static void InvokeMethods(List<Object>invokedClasses,string methodName)
+        {
+            for (int i = 0; i < invokedClasses.Count; i++)
+            {
+                var obj = (T)invokedClasses[i];
+                var methodInfo = obj.GetType().GetMethod(methodName);
+                if (methodInfo != null)
+                {
+                    var parameters = methodInfo.GetParameters();
+                    methodInfo.Invoke(invokedClasses[i], parameters);
+                }
+            }
+        }
+    }
+    public class Damager
+    {
+        private Collider _cahedCollider;
+        private IDamage _idamage;
+        public Damager()
+        {
+
+        }
+        public void OnColissionDamage(Collision col,int damage,string collideTag)
+        {
+            if(col.collider.tag == collideTag&&col.collider != _cahedCollider)
+            {
+                _cahedCollider = col.collider;
+                col.collider.TryGetComponent<IDamage>(out IDamage idamage);
+                _idamage = idamage;
+                _idamage.Damage(damage);
+                Debug.Log("Not Cached");
+                Debug.Log(_idamage.Health);
+                return ;
+            }
+            if(col.collider.tag == collideTag&&col.collider == _cahedCollider)
+            {
+                _idamage.Damage(damage);
+                Debug.Log("Cached");
+                Debug.Log(_idamage.Health);
+            }
+       
+        }
+    }
+
+    public class PLayerStatistics
+    {
+        public static int PlayerHitPoints;
+        public static int PlayerScorePoints;
+        public static bool _isActive;
+        public static void SetDamagePlayerHitPoints(int damage)
+        {
+            PlayerHitPoints -= damage;
+        }
+        public static void SetPlayerHitPoints(int hitPoints)
+        {
+            PlayerHitPoints = hitPoints;
+        }
+        public static void AddScorePoints(int score)
+        {
+            PlayerScorePoints += score;
+        }
+        public static void OnPLayerDisable(Player player,Object invokedClass,string methodName)
+        {
+            
+            if(player != null)
+            {
+                if(player.gameObject.activeInHierarchy)
+                {
+                    _isActive = true;
+                }
+                if(!player.gameObject.activeSelf&_isActive)
+                {
+                    ActionSystems.ActionInvoker<PlayerSpawner>.InvokeMethod(invokedClass, methodName);
+                    _isActive = false;
+                }
+                
+            }
+        }
     }
 }
 namespace PoolSystems
@@ -225,15 +303,20 @@ namespace PoolSystems
                 element = null;
                 return false;
             }
-        public T GetFreeElement()
+        public T GetFreeElement(Transform pos)
             {
-                if (this.HasFreeElement(out var element))
-
-                    return element;
-
-                if (this.IsAutoExpand)
+            if (this.HasFreeElement(out var element))
+            {
+                element.transform.position = pos.position;
+                element.transform.rotation = pos.rotation;
+                return element;
+            }
+            if (this.IsAutoExpand)
+            {
                 return this.CreateObject(true);
-                throw new Exception($"There is no element of type {typeof(T)}");
+            }
+            return null;
+               /* throw new Exception($"There is no element of type {typeof(T)}");*/
             
             }
         #endregion 
@@ -248,3 +331,4 @@ namespace PoolSystems
     }
     
 }
+
