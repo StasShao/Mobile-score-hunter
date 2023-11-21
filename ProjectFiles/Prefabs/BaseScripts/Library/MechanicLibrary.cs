@@ -148,6 +148,20 @@ namespace CharacterMechanicSystems
         }
         #endregion
     }
+    public class Animatronic
+    {
+        private Animator _animator;
+        public Animatronic(Animator animator)
+        {
+            _animator = animator;
+        }
+
+        public void PlayAnimationTrigger(string animationName)
+        {
+            _animator.SetTrigger(animationName);
+        }
+
+    }
 
 }
 namespace ActionSystems
@@ -211,20 +225,10 @@ namespace ActionSystems
 
     public class PLayerStatistics
     {
-        public static int PlayerHitPoints;
-        public static int PlayerScorePoints;
-        public static bool _isActive;
-        public static void SetDamagePlayerHitPoints(int damage)
+        private static bool _isActive;
+        public static void AddScorePoints(int score,ISetScore isetScore)
         {
-            PlayerHitPoints -= damage;
-        }
-        public static void SetPlayerHitPoints(int hitPoints)
-        {
-            PlayerHitPoints = hitPoints;
-        }
-        public static void AddScorePoints(int score)
-        {
-            PlayerScorePoints += score;
+            isetScore.AddPoints(score);
         }
         public static void OnPLayerDisable(Player player,Object invokedClass,string methodName)
         {
@@ -241,6 +245,14 @@ namespace ActionSystems
                     _isActive = false;
                 }
                 
+            }
+        }
+        public static void PlayerHit(Player player,Object invokedClass,string methodName,IHealth ihealth)
+        {
+            if(ihealth.CurentHealth > ihealth.Health)
+            {
+                ihealth.SetCurentHealth(ihealth.Health);
+                ActionSystems.ActionInvoker<Player>.InvokeMethod(invokedClass, methodName);
             }
         }
     }

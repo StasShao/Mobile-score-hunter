@@ -7,6 +7,11 @@ public abstract class Character : MonoBehaviour,IControllable,IDamage
     protected Controller controller;
     public Vector3 DirectionPoint { get; private set; }
     public int Health { get; private set; }
+    public int CurentHealth { get; private set; }
+    public void SetCurentHealth(int curent)
+    {
+        CurentHealth = curent;
+    }
     public void Damage(int damage)
     {
         Health = Health - damage;
@@ -28,5 +33,4 @@ public abstract class Character : MonoBehaviour,IControllable,IDamage
         controller = new Controller(characterTransform);
     }
 
-    
 }

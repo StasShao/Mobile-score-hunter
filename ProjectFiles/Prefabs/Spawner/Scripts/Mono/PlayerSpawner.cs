@@ -17,11 +17,15 @@ public class PlayerSpawner : MonoBehaviour
     {
         pool = new PoolMono<Player>(Prefab, SpawnPoolCount, SpawnContainer, AutoExpand);
         _createdPlayer = pool.GetFreeElement(SpawnContainer);
-    }
+          }
     private void Update()
     {
-        PLayerStatistics.OnPLayerDisable(_createdPlayer,this, "OnCoroutine");
-        
+        OnPlayerStats();
+    }
+    public virtual void OnPlayerStats()
+    {
+        PLayerStatistics.OnPLayerDisable(_createdPlayer, this, "OnCoroutine");
+        PLayerStatistics.PlayerHit(_createdPlayer, _createdPlayer, "TakeDamage", _createdPlayer);
     }
     public void OnCoroutine()
     {
@@ -38,6 +42,5 @@ public class PlayerSpawner : MonoBehaviour
         pool.GetFreeElement(SpawnContainer);
         _createdPlayer.SetDirectionPoint(SpawnContainer.position);
         OffCoroutine();
-
     }
 }

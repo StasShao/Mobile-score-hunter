@@ -16,8 +16,10 @@ public interface IAIControllable
 }
 public interface IHealth
 {
+    int CurentHealth { get; }
     int Health { get; }
     void SetHealth(int health);
+    void SetCurentHealth(int curent);
    
 }
 public interface IDamage:IHealth
@@ -29,4 +31,8 @@ public interface IPoints
     int PointsCount { get; }
     void SetPoints(int point);
 
+}
+public interface ISetScore:IPoints
+{
+    void AddPoints(int score);
 }
