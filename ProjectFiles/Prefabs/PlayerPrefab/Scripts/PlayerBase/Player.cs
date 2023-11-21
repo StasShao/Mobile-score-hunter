@@ -24,14 +24,14 @@ public class Player : Character
 
     public override void OnPointMove()
     {
-        controller.OnClickMove(_mouseClick, MoveForce, StopingDistance, CharacterRotationSpeed);
+        controller.OnClickMove(DirectionPoint, MoveForce, StopingDistance, CharacterRotationSpeed);
     }
 
     public override void Tick()
     {
         if(Input.GetMouseButtonDown(0))
         {
-           _mouseClick = controller.SetDirection(CameraMain, MovableInteractionLayer);
+            SetDirectionPoint(controller.DirectionMouse(CameraMain, MovableInteractionLayer, this));
         }
         
     }
