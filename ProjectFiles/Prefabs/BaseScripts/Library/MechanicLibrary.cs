@@ -219,16 +219,76 @@ namespace ActionSystems
                 Debug.Log("Cached");
                 Debug.Log(_idamage.Health);
             }
-       
+        }
+        public void OnTriggerDamage(Collider col,int damage,string colliderTagName)
+        {
+            if(col.tag == colliderTagName && col != _cahedCollider)
+            {
+                _cahedCollider = col;
+                col.TryGetComponent<IDamage>(out IDamage idamage);
+                _idamage = idamage;
+                _idamage.Damage(damage);
+                _cahedCollider.gameObject.SetActive(false);
+                Debug.Log("Not Cached");
+                Debug.Log(_idamage.Health);
+                return;
+            }
+            if (col.tag == colliderTagName && col == _cahedCollider)
+            {
+                _idamage.Damage(damage);
+                _cahedCollider.gameObject.SetActive(false);
+                Debug.Log(_idamage.Health);
+                Debug.Log("Cached");
+            }
+        }
+    }
+    public class Pointer
+    {
+        private GameObject _go;
+        public Pointer(GameObject go)
+        {
+            _go = go;
+        }
+        public void OnPointAdd(Collider col,string attachedColliderTag,int score)
+        {
+            if(col.tag == attachedColliderTag)
+            {
+                if(col.TryGetComponent<ISetScore>(out ISetScore isetScore))
+                {
+                    isetScore.AddPoints(score);
+                    Debug.Log(isetScore.PointsCount);
+                    _go.SetActive(false);
+                }
+
+            }
         }
     }
 
     public class PLayerStatistics
     {
         private static bool _isActive;
+        public static List<bool> _isItemsActive = new List<bool>();
         public static void AddScorePoints(int score,ISetScore isetScore)
         {
             isetScore.AddPoints(score);
+        }
+        public static void OnItemDisable(List<Item> itemList,Object invokedClass,string methodName)
+        {
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                if(itemList[i] != null)
+                {
+                    if(itemList[i].gameObject.activeInHierarchy)
+                    {
+                        _isItemsActive[i] = true;
+                    }
+                    if (!itemList[i].gameObject.activeInHierarchy & _isItemsActive[i])
+                    {
+                        ActionSystems.ActionInvoker<PointSpawner>.InvokeMethod(invokedClass, methodName);
+                        _isItemsActive[i] = false;
+                    }
+                }
+            }
         }
         public static void OnPLayerDisable(Player player,Object invokedClass,string methodName)
         {
@@ -271,7 +331,7 @@ namespace PoolSystems
             public T prefab { get; }
             public bool IsAutoExpand { get; set; }
             public Transform container { get; }
-            private List<T> pool;
+            public List<T> pool { get; private set; }
         #endregion
 
           #region CTOR

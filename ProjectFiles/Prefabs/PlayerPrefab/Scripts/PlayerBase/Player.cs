@@ -4,7 +4,7 @@ using UnityEngine;
 using ActionSystems;
 using CharacterMechanicSystems;
 [RequireComponent(typeof(Animator))]
-public class Player : Character
+public class Player : Character,ISetScore
 {
     private Transform _characterTransform;
     private Camera CameraMain;
@@ -17,6 +17,17 @@ public class Player : Character
     private Vector3 _mouseClick;
     public DamageAnimations damageAnimations;
 
+    #region ISetScore
+    public int PointsCount { get; private set; }
+    public void AddPoints(int score)
+    {
+        PointsCount += score;
+    }
+    public void SetPoints(int point)
+    {
+        PointsCount = point;
+    }
+    #endregion
     public enum DamageAnimations
     {
         DeathAnimation,
@@ -83,4 +94,5 @@ public class Player : Character
         Tick();
     }
 
+    
 }
