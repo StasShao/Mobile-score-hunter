@@ -83,17 +83,22 @@ namespace CharacterMechanicSystems
     }
     public class AIController
     {
-
+        #region Variables
         private Animator _searcherAnimator;
         private Controller _controller;
         private Transform _wayPoint;
-        private Collider _wayPointColliderTrace;
+        #endregion
+
+        #region CTOR
         public AIController(Controller controller, Animator searcherAnimator, Transform wayPoint)
         {
             _controller = controller;
             _searcherAnimator = searcherAnimator;
             _wayPoint = wayPoint;
         }
+        #endregion
+
+        #region Voides
         public void OnMoveBehavior(bool isDetected, NavMeshAgent agent, Transform target)
         {
             if (isDetected)
@@ -141,6 +146,105 @@ namespace CharacterMechanicSystems
             
 
         }
+        #endregion
     }
 
+}
+namespace ActionSystems
+{
+    public class ActionInvoker<T>where T:Object
+    {
+        public static void InvokeMethod(Object invokedClass,string methodName)
+        {
+            
+            var obj = (T)invokedClass;
+            var methodInfo = obj.GetType().GetMethod(methodName);
+            if(methodInfo != null)
+            {
+                var parameters = methodInfo.GetParameters();
+                methodInfo.Invoke(invokedClass, parameters);
+            }
+        }
+    }
+}
+namespace PoolSystems
+{
+    using System;
+    
+    /// <summary>
+    /// Клас generic реализует пул объектов
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+        public class PoolMono<T> where T : MonoBehaviour
+        {
+          #region Variables
+            public T prefab { get; }
+            public bool IsAutoExpand { get; set; }
+            public Transform container { get; }
+            private List<T> pool;
+        #endregion
+
+          #region CTOR
+        public PoolMono(T prefab, int count, Transform container,bool isAutoExpand)
+        {
+             this.prefab = prefab;
+             this.container = container;
+             this.IsAutoExpand = isAutoExpand;
+             this.CreatePool(count);
+        }
+        #endregion
+
+          #region VOides
+        private void CreatePool(int count)
+        {
+          this.pool = new List<T>();
+          for (int i = 0; i < count; i++)
+          {
+            this.CreateObject();
+          }
+        }
+        private T CreateObject(bool isActiveByDefoult = false)
+            {
+                var createdObject = PoolCreator<T>.Instance(prefab,container);
+                createdObject.gameObject.SetActive(isActiveByDefoult);
+                this.pool.Add(createdObject);
+                return createdObject;
+
+            }
+        public bool HasFreeElement(out T element)
+            {
+                foreach (var mono in pool)
+                {
+                    if (!mono.gameObject.activeInHierarchy)
+                    {
+                        element = mono;
+                        mono.gameObject.SetActive(true);
+                        return true;
+                    }
+                }
+                element = null;
+                return false;
+            }
+        public T GetFreeElement()
+            {
+                if (this.HasFreeElement(out var element))
+
+                    return element;
+
+                if (this.IsAutoExpand)
+                return this.CreateObject(true);
+                throw new Exception($"There is no element of type {typeof(T)}");
+            
+            }
+        #endregion 
+    }
+    public class PoolCreator<T>:MonoBehaviour where T:MonoBehaviour
+    {
+        public static T Instance(T prefab,Transform container)
+        {
+            var createdObject = Instantiate(prefab,container.position,container.rotation,container);
+            return createdObject;
+        }
+    }
+    
 }

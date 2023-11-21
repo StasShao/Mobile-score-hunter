@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CharacterMechanicSystems;
 using UnityEngine.AI;
+using ActionSystems;
 public class EnemyCharacter : Character,IAIControllable
 {
     protected AIController aiController;
@@ -49,6 +50,7 @@ public class EnemyCharacter : Character,IAIControllable
         AIBehavior();
         OnSearching();
         WaypointRandomizePosition();
+        InvokeMethod();
     }
     public virtual void OnSearching()
     {
@@ -63,6 +65,18 @@ public class EnemyCharacter : Character,IAIControllable
     {
         aiController.WayPointRandomizerPosition(WayPointMinDistance,GroundLayer,transform);
     }
+    public virtual void InvokeMethod()
+    {
+        if(Input.GetKey(KeyCode.Space))
+        {
+            ActionInvoker<EnemyCharacter>.InvokeMethod(this,"Test");
+        }
+    }
+    public void Test()
+    {
+        Debug.Log("Test is good");
+    }
+
     private void Start()
     {
         Begin();
