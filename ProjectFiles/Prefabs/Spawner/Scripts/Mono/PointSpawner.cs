@@ -13,24 +13,28 @@ public class PointSpawner : MonoBehaviour
     [SerializeField] private int SpawnPoolCount;
     [SerializeField] private bool AutoExpand;
     [SerializeField] private float SpawnTimeInterval;
+    
     private Item _createdItem;
     private void Start()
     {
         pool = new PoolMono<Item>(Prefab, SpawnPoolCount, SpawnContainer, AutoExpand);
-        for (int i = 0; i < SpawnPositionsList.Count; i++)
-        {
-           _createdItem = pool.GetFreeElement(SpawnContainer);
-            _itemLists.Add(_createdItem);
-            _createdItem.transform.parent = SpawnPositionsList[i];
-            _createdItem.transform.localPosition = new Vector3(0+Random.Range(-0.3f,0.3f),1,0+ Random.Range(-0.3f, 0.3f));
-            PLayerStatistics._isItemsActive.Add(true);
-
-        }
+        PointersStartSpawn();
 
     }
     private void Update()
     {
         PLayerStatistics.OnItemDisable(_itemLists,this, "OnCoroutine");
+    }
+    public virtual void PointersStartSpawn()
+    {
+        for (int i = 0; i < SpawnPositionsList.Count; i++)
+        {
+            _createdItem = pool.GetFreeElement(SpawnContainer);
+            _itemLists.Add(_createdItem);
+            _createdItem.transform.parent = SpawnPositionsList[i];
+            _createdItem.transform.localPosition = new Vector3(0 + Random.Range(-0.3f, 0.3f), 1, 0 + Random.Range(-0.3f, 0.3f));
+            PLayerStatistics._isItemsActive.Add(true);
+        }
     }
     public void OnCoroutine()
     {
@@ -45,8 +49,9 @@ public class PointSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(t);
         _createdItem = pool.GetFreeElement(SpawnContainer);
+        var pos = new Vector3(0.3f,0,0.3f);
         _createdItem.transform.position = SpawnPositionsList[Random.Range(0, SpawnPositionsList.Count)].transform.position;
-        _createdItem.transform.localPosition = new Vector3(0 + Random.Range(-0.3f, 0.3f), 1, 0 + Random.Range(-0.3f, 0.3f));
+        _createdItem.transform.position = _createdItem.transform.position + pos;
         OffCoroutine();
     }
 }

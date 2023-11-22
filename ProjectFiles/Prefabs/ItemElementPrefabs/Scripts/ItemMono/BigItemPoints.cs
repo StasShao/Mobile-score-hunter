@@ -6,9 +6,11 @@ public class BigItemPoints : Item
 {
     [SerializeField] protected string attachedCollider;
     [SerializeField] protected int ScorePointAdd;
+    private Player _invokedClass;
     public override void AddPoints(Collider col)
     {
         pointer.OnPointAdd(col,attachedCollider,ScorePointAdd);
+        _invokedClass = col.GetComponent<Player>();
     }
 
     public override void Begin()
@@ -23,4 +25,5 @@ public class BigItemPoints : Item
     {
         AddPoints(other);
     }
+    
 }

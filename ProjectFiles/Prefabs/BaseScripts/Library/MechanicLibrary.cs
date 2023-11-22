@@ -244,10 +244,15 @@ namespace ActionSystems
     }
     public class Pointer
     {
+        private bool _isSaved;
         private GameObject _go;
         public Pointer(GameObject go)
         {
             _go = go;
+        }
+        public Pointer()
+        {
+
         }
         public void OnPointAdd(Collider col,string attachedColliderTag,int score)
         {
@@ -260,6 +265,21 @@ namespace ActionSystems
                     _go.SetActive(false);
                 }
 
+            }
+        }
+        public void OnProgressPointsSave(ScoreManager scoreManager,ISetScore isetScore)
+        {
+            
+            if(isetScore.PointsCount > scoreManager.highScore)
+            {
+                scoreManager.highScore = isetScore.PointsCount;
+                scoreManager.SaveScores();
+                Debug.Log("Saved");
+                _isSaved = true;
+            }
+            if(isetScore.PointsCount <= scoreManager.highScore)
+            {
+                _isSaved = false;
             }
         }
     }

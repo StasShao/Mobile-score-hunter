@@ -11,21 +11,30 @@ public class PlayerSpawner : MonoBehaviour
     [SerializeField] private int SpawnPoolCount;
     [SerializeField] private bool AutoExpand;
     [SerializeField] private float SpawnTimeInterval;
-    private Player _createdPlayer;
+    public Player createdPlayer;
+    public ScoreManager scoreManager;
+    private Pointer _pointer = new Pointer();
 
     private void Start()
     {
         pool = new PoolMono<Player>(Prefab, SpawnPoolCount, SpawnContainer, AutoExpand);
-        _createdPlayer = pool.GetFreeElement(SpawnContainer);
-          }
+        createdPlayer = pool.GetFreeElement(SpawnContainer);
+        Debug.Log(scoreManager.highScore);
+    }
     private void Update()
     {
         OnPlayerStats();
+        OnProgressDataSave();
+    }
+    public virtual void OnProgressDataSave()
+    {
+        _pointer.OnProgressPointsSave(scoreManager,createdPlayer);
+        
     }
     public virtual void OnPlayerStats()
     {
-        PLayerStatistics.OnPLayerDisable(_createdPlayer, this, "OnCoroutine");
-        PLayerStatistics.PlayerHit(_createdPlayer, _createdPlayer, "TakeDamage", _createdPlayer);
+        PLayerStatistics.OnPLayerDisable(createdPlayer, this, "OnCoroutine");
+        PLayerStatistics.PlayerHit(createdPlayer, createdPlayer, "TakeDamage", createdPlayer);
     }
     public void OnCoroutine()
     {
@@ -40,7 +49,7 @@ public class PlayerSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(t);
         pool.GetFreeElement(SpawnContainer);
-        _createdPlayer.SetDirectionPoint(SpawnContainer.position);
+        createdPlayer.SetDirectionPoint(SpawnContainer.position);
         OffCoroutine();
     }
 }

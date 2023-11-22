@@ -72,6 +72,7 @@ public class Player : Character,ISetScore
         
 
     }
+    
     public virtual void TakeDamage()
     {
         string curentAnimation = damageAnimations.ToString();
