@@ -408,7 +408,7 @@ namespace PoolSystems
                 return this.CreateObject(true);
             }
             return null;
-               /* throw new Exception($"There is no element of type {typeof(T)}");*/
+              
             
             }
         #endregion 

@@ -5,7 +5,7 @@ using System.IO;
 using System;
 public class ScoreManager : MonoBehaviour
 {
-    private string savePath; // Путь к файлу сохранения
+    public string savePath; // Путь к файлу сохранения
 
     public int highScore; // Текущий рекорд очков игрока
 
@@ -28,7 +28,6 @@ public class ScoreManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Huy nahuy");
             highScore = 0; // Если файл сохранения не существует, рекорд будет равен 0
         }
     }

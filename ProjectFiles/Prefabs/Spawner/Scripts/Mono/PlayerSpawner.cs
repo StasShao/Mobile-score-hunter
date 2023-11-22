@@ -19,6 +19,7 @@ public class PlayerSpawner : MonoBehaviour
     {
         pool = new PoolMono<Player>(Prefab, SpawnPoolCount, SpawnContainer, AutoExpand);
         createdPlayer = pool.GetFreeElement(SpawnContainer);
+        Debug.Log(scoreManager.savePath);
         Debug.Log(scoreManager.highScore);
     }
     private void Update()
